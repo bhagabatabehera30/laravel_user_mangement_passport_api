@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // User / Admin
-Route::group(['prefix' => 'v2'], function () {
+Route::group(['prefix' => 'v2',  'middleware' => 'cors'], function () {
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/register', [UserController::class, 'register']);   
         Route::post('/login/email', [UserController::class, 'loginWithEmail']); 
@@ -28,7 +28,7 @@ Route::group(['prefix' => 'v2'], function () {
 
         Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/user/profile', [UserController::class, 'UserProfile']); 
-            Route::get('/user/logout', [UserController::class, 'logOut']);
+            Route::post('/user/logout', [UserController::class, 'logOut']);
         });
     });
     

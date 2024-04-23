@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,7 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-       /* $moduleKeyArr=[
+        //Artisan::call("passport:install yes yes");
+        //Artisan::call("passport:client --personal AUTH API");
+
+        $moduleKeyArr=[
             [
             'module_title' => 'App Settings',
             'module_key' => 'app_settings',
@@ -71,7 +77,24 @@ class DatabaseSeeder extends Seeder
                         $userRoleP=\App\Models\Api\UserRolePermission::create($uRArr);
                     }
                 }
-    */
+
+                $payloadAdmin=[
+                    'first_name' => 'Super',
+                    'last_name' => 'Admin',
+                    'user_code'=> 'superadmin',
+                    'email' => 'superadmin@mailinator.com',
+                    'country_code' => '91',
+                    'mobile' => '9953331765',
+                    'label' => 'Adminstrator',
+                    'status' => 1,
+                    'primary_role_id'=>1,
+                    'creator_id' => null,
+                    'secondary_roles' => null,
+                    'email_verified_at' => now(),
+                    'password' => Hash::make('99999999'), // password
+                    'remember_token' => Str::random(10),
+                ];
+                \App\Models\User::create($payloadAdmin);
             
 
        // \App\Models\Api\AppModule::User::create($moduleKeyArr);

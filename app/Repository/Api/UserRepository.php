@@ -34,7 +34,8 @@ class UserRepository implements UserRepositoryInterface{
     public function getUserAfterLoggedIn($user) {
 
         $roleIdsArr=[];
-        if($user->primary_role_id){$roleIdsArr[]=$user->primary_role_id;}
+        if($user!=null){
+        if($user->primary_role_id!=null){$roleIdsArr[]=$user->primary_role_id;}
         if($user->secondary_roles!=null){
             $roleIdsArr=array_merge($roleIdsArr, explode(',', $user->secondary_roles));
         }
@@ -47,6 +48,7 @@ class UserRepository implements UserRepositoryInterface{
            }
         }
         $user->userPermissions=$userRolePermissions;
+    }
         return $user; 
     }
 

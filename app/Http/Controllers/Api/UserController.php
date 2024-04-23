@@ -13,7 +13,7 @@ use App\Models\User;
 
 //use App\Models\Api\UserRole;
 //use App\Models\Api\UserRolePermission;
-//use Hash;
+use Hash;
 
 
 class UserController extends Controller
@@ -59,8 +59,11 @@ class UserController extends Controller
             'status' => false,
             'message' => 'Invalid credential'
         ];
-        if (\Auth::attempt($request->only('email', 'password'))) {
-            $user = \Auth::user();
+        $user=User::where('email',$request->email)->first();
+        if($user==null){
+            return response($resArr, Response::HTTP_UNAUTHORIZED); 
+        }
+        if (Hash::check($request->password, $user->password)) {
             $user = $this->repository->getUserAfterLoggedIn($user);
             /*if ($request->cookie('jwt')) {
                  \Cookie()->forget('jwt');
@@ -69,12 +72,14 @@ class UserController extends Controller
              */
             //dd(env('PASSPORT_TOKEN_NAME'));
             $tokenName = env('PASSPORT_TOKEN_NAME', 'Token Name');
+            //dd($tokenName);
             $token = $user->createToken($tokenName)->accessToken;
-            $cookie = cookie('token', $token, 60 * 24 * 7); // 1 week
+            $cookie = cookie('token', $token, 5); // 1 week
             $resArr = [
                 'status' => true,
                 'message' => 'Success',
-                'token' => $token
+                'token' => $token,
+                "token_type" => "Bearer",
             ];
             //return response($resArr, Response::HTTP_OK);
             return response($resArr, Response::HTTP_OK)->withCookie($cookie);
@@ -100,9 +105,10 @@ class UserController extends Controller
 
     public function logOut(Request $request)
     {
-        if (\Auth::user()) {
+        if (\Auth::guard('api')->user()) {
             $request->user()->token()->revoke();
-            $cookie=\Cookie()->forget('token');
+            $cookie = cookie('token', '', time()-3600);
+            //$cookie=\Cookie()->forget('token');
             //$cookie=\Cookie()->forget('jwt');
             $resArr = [
                 'status' => true,
