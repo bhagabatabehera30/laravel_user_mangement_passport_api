@@ -74,7 +74,7 @@ class UserController extends Controller
             $tokenName = env('PASSPORT_TOKEN_NAME', 'Token Name');
             //dd($tokenName);
             $token = $user->createToken($tokenName)->accessToken;
-            $cookie = cookie('token', $token, 5); // 1 week
+            $cookie = cookie('token', $token, 60 * 24 * 7); // 1 week
             $resArr = [
                 'status' => true,
                 'message' => 'Success',
